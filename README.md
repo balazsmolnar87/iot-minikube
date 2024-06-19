@@ -37,3 +37,59 @@ docker run -d --name mosquitto -p 1883:1883 -p 9001:9001 eclipse-mosquitto
 
 Well, it runs, but I need to subscribe to a topic so I can check if messages arrive.
 
+# Created mosquitto folder
+
+Dockerfile
+
+```
+# Use the official Eclipse Mosquitto image as the base
+FROM eclipse-mosquitto:latest
+
+# Add a script to run when the container starts
+COPY start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
+# Override the default command
+CMD ["/usr/local/bin/start.sh"]
+```
+
+start.sh
+
+```
+#!/bin/sh
+
+# Start Mosquitto broker in the background
+mosquitto -c /mosquitto/config/mosquitto.conf &
+
+# Wait for the broker to start
+sleep 2
+
+# Subscribe to the topic and log messages to a file
+mosquitto_sub -h localhost -t test/topic -v > /mosquitto/log/subscribed_messages.log &
+
+# Keep the container running
+tail -f /dev/null
+```
+
+# Build the Custom Docker Image
+
+docker build -t custom-mosquitto .
+
+# Create folders and config 
+
+mkdir -p ./config
+mkdir -p ./data
+mkdir -p ./log
+
+nano ./config/mosquitto.conf
+
+# Run custom container
+
+```
+docker run -d --name custom-mosquitto -p 1883:1883 -p 9001:9001 \
+  -v ./config:/mosquitto/config \
+  -v ./data:/mosquitto/data \
+  -v ./log:/mosquitto/log \
+  custom-mosquitto
+```
+
