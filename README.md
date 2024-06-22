@@ -238,3 +238,8 @@ const char* SUBSCRIBE_TOPIC = "esp8266/sub";
 #endif
 ```
 
+## Getting NaN for sensor data
+
+I am getting wrong sensor data but sending a simple hello message works.
+
+![subscribe to docker broker](static/pics/subscribe_to_docker_broker.png)
