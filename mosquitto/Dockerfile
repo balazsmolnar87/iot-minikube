@@ -1,9 +1,8 @@
-# Use the official Eclipse Mosquitto image as the base
-FROM eclipse-mosquitto:latest
+# Use the official Mosquitto image from Docker Hub
+FROM eclipse-mosquitto
 
-# Add a script to run when the container starts
-COPY start.sh /usr/local/bin/start.sh
-RUN chmod +x /usr/local/bin/start.sh
+# Expose MQTT port
+EXPOSE 1883
 
-# Override the default command
-CMD ["/usr/local/bin/start.sh"]
+# Copy your custom configuration file if needed
+COPY config/mosquitto.conf /mosquitto/config/mosquitto.conf
