@@ -1,7 +1,7 @@
 # IoT-minikube
 Local Kubernetes pet project to receive IoT sensor data and display it in Grafana
 
-# Setting up workspace on my Windows PC
+# 1. Setting up workspace on my Windows PC
 Setting Up WSL 2 & Docker Desktop
 
 [https://minikube.sigs.k8s.io/docs/tutorials/wsl_docker_driver/](https://minikube.sigs.k8s.io/docs/tutorials/wsl_docker_driver/)
@@ -19,7 +19,7 @@ sudo apt-get update
 sudo apt-get install mosquitto mosquitto-clients
 mosquitto
 
-# Test
+## Test
 
 mosquitto_sub -h localhost -t test/topic
 
@@ -27,7 +27,7 @@ In another terminal
 
 mosquitto_pub -h localhost -t test/topic -m "Hello MQTT"
 
-# Let's run Mosquitto in docker
+# 2. Let's run Mosquitto in docker
 ```
 mkdir /home/iot-minikube/mosquitto
 
@@ -36,13 +36,13 @@ cd /home/iot-minikube/mosquitto
 docker pull eclipse-mosquitto
 ```
 
-# Run the Mosquitto container with the default configuration:
+## Run the Mosquitto container with the default configuration:
 
 docker run -d --name mosquitto -p 1883:1883 -p 9001:9001 eclipse-mosquitto
 
 Well, it runs, but I need to subscribe to a topic so I can check if messages arrive.
 
-# Created mosquitto folder, now create Dockerfile and the config
+## Created mosquitto folder, now create Dockerfile and the config
 Create Dockerfile:
 ```
 vi Dockerfile
@@ -75,16 +75,16 @@ listener 1883
 allow_anonymous true
 ```
 
-# Build the Custom Docker Image
+## Build the Custom Docker Image
 ```
 docker build -t custom-mosquitto .
 ```
-# Create folders for data and log 
+## Create folders for data and log 
 ```
 mkdir /home/iot-minikube/mosquitto/data
 mkdir /home/iot-minikube/mosquitto/log
 ```
-# Run custom container
+## Run custom container
 
 ```
 docker run -d -p 1883:1883 --name my-mosquitto-container my-mosquitto-image
@@ -92,7 +92,7 @@ docker run -d -p 1883:1883 --name my-mosquitto-container my-mosquitto-image
 
 I can post messages to the broker and also subscribe to it so I can get the messages.
 
-# Create 'main' folder for esp8266
+## Create 'main' folder for esp8266
 
 ```
 mkdir /home/iot-minikube/mosquitto/main
@@ -243,3 +243,11 @@ const char* SUBSCRIBE_TOPIC = "esp8266/sub";
 I am getting wrong sensor data but sending a simple hello message works.
 
 ![subscribe to docker broker](static/pics/subscribe_to_docker_broker.png)
+
+# 3. Set up InfluxDB in docker
+
+[https://www.influxdata.com/blog/running-influxdb-2-0-and-telegraf-using-docker/](https://www.influxdata.com/blog/running-influxdb-2-0-and-telegraf-using-docker/)
+
+Following this article I was able to set up the 3 containers. Put two cells on a dashboard in Influxdb to see the two sensor data coming in live.
+
+![influxdb dashboard](./static/pics/influx-dashboard.png)
