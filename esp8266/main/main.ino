@@ -84,8 +84,8 @@ void loop() {
 
   timeClient.update();
 
-  h = dht.readHumidity();
-  t = dht.readTemperature();
+  h = 80.0;
+  t = 21.0;
 
   if (isnan(h) || isnan(t)) {
     Serial.println("Failed to read from DHT sensor!");
